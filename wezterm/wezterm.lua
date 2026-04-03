@@ -92,7 +92,7 @@ local bash = "C:\\Program Files\\Git\\bin\\bash.exe"
 
 return {
   -- 起動時にピカチュウを表示してからGit Bashを起動
-  default_prog = { bash, "-c", 'bash "$HOME/wezterm_config/wezterm/pikachu.sh"; exec bash' },
+  default_prog = { bash, "-c", 'bash "$HOME/dotfiles/wezterm/pikachu.sh"; exec bash' },
 
   -- ウィンドウ全体の不透明度（0.0=完全透明 〜 1.0=不透明）
   window_background_opacity = 0.85,
