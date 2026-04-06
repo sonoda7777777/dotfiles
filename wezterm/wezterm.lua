@@ -94,8 +94,17 @@ return {
   -- 起動時にピカチュウを表示してからGit Bashを起動
   default_prog = { bash, "-c", 'bash "$HOME/dotfiles/wezterm/pikachu.sh"; exec bash' },
 
+  -- タイトルバーを非表示（リサイズは維持）
+  window_decorations = "RESIZE",
+
   -- ウィンドウ全体の不透明度（0.0=完全透明 〜 1.0=不透明）
   window_background_opacity = 0.85,
+
+  -- タブバー透明化 --
+  window_frame = {
+    inactive_titlebar_bg = "none",
+    active_titlebar_bg = "none",
+  },
 
   colors = {
     tab_bar = {
