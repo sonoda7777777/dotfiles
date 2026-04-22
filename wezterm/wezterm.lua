@@ -1,12 +1,12 @@
 local wezterm = require 'wezterm'
 
--- プロセス名 → アイコン対応テーブル（エディタ検出用）
+-- プロセス名 → アイコン対応テーブル
 local process_icons = {
   vim   = wezterm.nerdfonts.custom_vim,
   nvim  = wezterm.nerdfonts.custom_vim,
   nano  = wezterm.nerdfonts.md_file_edit_outline,
   emacs = wezterm.nerdfonts.custom_emacs,
-  hx    = wezterm.nerdfonts.md_file_edit_outline, -- Helix
+  hx    = wezterm.nerdfonts.md_file_edit_outline,
   code  = wezterm.nerdfonts.md_microsoft_visual_studio_code,
 }
 
@@ -32,14 +32,14 @@ local ext_icons = {
   hpp  = wezterm.nerdfonts.custom_cpp,
 }
 
+-- タイトル文字列からファイルの拡張子を抽出する
 local function get_ext(title)
-  -- "(modified)" などの後置詞にも対応
   return title:match("%.(%w+)%s*$")
       or title:match("%.(%w+)%s*%(")
       or title:match("%.(%w+)")
 end
 
--- タイトル文字列からエディタを検出（foreground_process_name が更新されない場合のフォールバック）
+-- タイトル文字列からエディタ名を検出する（foreground_process_nameが取得できない場合のフォールバック）
 local function detect_editor_from_title(title)
   if title:find("GNU nano", 1, true) then return "nano" end
   if title:find("NVIM", 1, true)     then return "nvim" end
@@ -47,21 +47,21 @@ local function detect_editor_from_title(title)
   return nil
 end
 
-wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
-  local title = tab.active_pane.title
+-- タブのフォアグラウンドプロセス名を取得する（パスと.exeを除去し小文字化）
+local function get_process_name(tab)
   local process = tab.active_pane.foreground_process_name or ""
+  local name = process:match("([^/\\]+)$") or process
+  name = name:gsub("%.exe$", ""):lower()
 
-  -- プロセス名のベース名を取得（パスと .exe を除去）
-  local process_name = process:match("([^/\\]+)$") or process
-  process_name = process_name:gsub("%.exe$", ""):lower()
-
-  -- Windows + Git Bash では foreground_process_name が bash のままになることがあるため
-  -- タイトルからエディタを検出してフォールバック
-  if process_name == "bash" or process_name == "" then
-    process_name = detect_editor_from_title(title) or process_name
+  if name == "bash" or name == "" then
+    name = detect_editor_from_title(tab.active_pane.title) or name
   end
 
-  -- タイトルから拡張子を抽出（nano は特殊フォーマット対応）
+  return name
+end
+
+-- タイトルとプロセス名からタブに表示するアイコンを決定する
+local function get_icon(title, process_name)
   local ext
   if process_name == "nano" then
     ext = title:match("%s+%S-%.(%w+)%s*$")
@@ -71,36 +71,49 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
     ext = get_ext(title)
   end
 
-  wezterm.log_info("title=" .. title .. " | process=" .. process .. " | process_name=" .. process_name .. " | ext=" .. (ext or "nil"))
-
-  local icon
   if ext and ext_icons[ext:lower()] then
-    -- ファイル拡張子で判定できた場合はそちらを優先
-    icon = ext_icons[ext:lower()]
+    return ext_icons[ext:lower()]
   elseif process_icons[process_name] then
-    -- エディタ等のプロセス名で判定
-    icon = process_icons[process_name]
+    return process_icons[process_name]
   end
 
-  icon = icon or wezterm.nerdfonts.dev_terminal
-  return {
-    { Text = icon .. " " .. title },
-  }
+  return wezterm.nerdfonts.dev_terminal
+end
+
+wezterm.on("format-tab-title", function(tab)
+  local title = tab.active_pane.title
+  local process_name = get_process_name(tab)
+  local icon = get_icon(title, process_name)
+
+  if tab.is_active then
+    return { { Text = icon .. " " .. title } }
+  end
+
+  return { { Text = icon .. " " .. wezterm.truncate_right(title, 2) } }
 end)
 
 local bash = "C:\\Program Files\\Git\\bin\\bash.exe"
 
 return {
-  -- 起動時にピカチュウを表示してからGit Bashを起動
-  default_prog = { bash, "-c", 'bash "$HOME/dotfiles/wezterm/pikachu.sh"; exec bash' },
-
-  -- タイトルバーを非表示（リサイズは維持）
+  default_prog = { bash, "--login" },
   window_decorations = "RESIZE",
 
-  -- ウィンドウ全体の不透明度（0.0=完全透明 〜 1.0=不透明）
-  window_background_opacity = 0.85,
+  background = {
+    {
+      source = { Color = "#000000" },
+      width = "100%",
+      height = "100%",
+      opacity = 0.85,
+    },
+    {
+      source = { File = "C:\\Users\\Owner\\dotfiles\\wezterm\\backgrounds\\sanraku.png" },
+      width = "30%",
+      height = "100%",
+      opacity = 0.85,
+      horizontal_align = "Right",
+    },
+  },
 
-  -- タブバー透明化 --
   window_frame = {
     inactive_titlebar_bg = "none",
     active_titlebar_bg = "none",
@@ -108,34 +121,23 @@ return {
 
   colors = {
     tab_bar = {
-      -- タブバー背景色（rgba の第4引数で透明度を指定）
       background = 'rgba(0, 0, 0, 0.5)',
-
-      -- アクティブなタブ
       active_tab = {
-        bg_color = 'rgba(40, 40, 40, 0.7)',
+        bg_color = 'rgba(0, 71, 171, 0.8)',
         fg_color = '#ffffff',
       },
-
-      -- 非アクティブなタブ
       inactive_tab = {
         bg_color = 'rgba(20, 20, 20, 0.5)',
         fg_color = '#aaaaaa',
       },
-
-      -- 非アクティブなタブにカーソルを合わせたとき
       inactive_tab_hover = {
         bg_color = 'rgba(35, 35, 35, 0.6)',
         fg_color = '#cccccc',
       },
-
-      -- 新規タブボタン
       new_tab = {
         bg_color = 'rgba(20, 20, 20, 0.5)',
         fg_color = '#aaaaaa',
       },
-
-      -- 新規タブボタンにカーソルを合わせたとき
       new_tab_hover = {
         bg_color = 'rgba(35, 35, 35, 0.6)',
         fg_color = '#cccccc',
