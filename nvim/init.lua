@@ -15,3 +15,4 @@ require("lazy").setup("plugins")
 
 require("config.cmp")
 require("config.mason")
+require("config.nvim-tree")

@@ -25,4 +25,8 @@ return {
     ft = "lua",
     opts = {},
   },
+
+  -- ファイルツリー
+  { "nvim-tree/nvim-tree.lua" },
+  { "nvim-tree/nvim-web-devicons" },
 }

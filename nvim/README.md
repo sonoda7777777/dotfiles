@@ -9,8 +9,9 @@ nvim/
     ├── options.lua   -- 基本設定（表示・インデント）
     ├── plugins.lua   -- プラグイン一覧（lazy.nvim）
     └── config/
-        ├── cmp.lua   -- 自動補完設定
-        └── mason.lua -- LSPサーバー管理
+        ├── cmp.lua       -- 自動補完設定
+        ├── mason.lua     -- LSPサーバー管理
+        └── nvim-tree.lua -- ファイルツリー設定
 ```
 
 ## 各ファイルの説明
@@ -34,6 +35,8 @@ lazy.nvim で管理するプラグイン一覧。
 | neovim/nvim-lspconfig | LSP設定 |
 | williamboman/mason.nvim | LSPサーバー管理 |
 | folke/lazydev.nvim | Lua開発補助 |
+| nvim-tree/nvim-tree.lua | ファイルツリー |
+| nvim-tree/nvim-web-devicons | アイコン表示 |
 
 ### `lua/config/cmp.lua`
 nvim-cmp の補完設定。キーマップは以下の通り。
@@ -48,6 +51,13 @@ nvim-cmp の補完設定。キーマップは以下の通り。
 
 ### `lua/config/mason.lua`
 Mason によるLSPサーバーの自動インストール設定。
+
+### `lua/config/nvim-tree.lua`
+nvim-tree の設定。キーマップは以下の通り。
+
+| キー | 動作 |
+|------|------|
+| `<C-n>` | ファイルツリーをトグル |
 
 ## 依存関係
 
