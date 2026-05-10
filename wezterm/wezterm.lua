@@ -98,6 +98,11 @@ return {
   default_prog = { bash, "--login" },
   window_decorations = "RESIZE",
 
+  font = wezterm.font_with_fallback {
+    "JetBrainsMono NF",
+    "JetBrains Mono",
+  },
+
   background = {
     {
       source = { Color = "#000000" },
