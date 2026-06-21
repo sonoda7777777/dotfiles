@@ -111,7 +111,7 @@ return {
       opacity = 0.85,
     },
     {
-      source = { File = "C:\\Users\\Owner\\dotfiles\\wezterm\\backgrounds\\sanraku.png" },
+      source = { File = "C:\\Users\\Owner\\dotfiles\\wezterm\\backgrounds\\leorio.png" },
       width = "30%",
       height = "100%",
       opacity = 0.85,
