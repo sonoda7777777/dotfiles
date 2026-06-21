@@ -6,6 +6,9 @@ vim.api.nvim_set_hl(0, "NormalNC", { bg = "NONE" })
 -- 行番号表示
 vim.opt.number = true
 
+-- 24bitカラー（barbar等に必要）
+vim.opt.termguicolors = true
+
 -- インデント設定
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2

@@ -29,4 +29,28 @@ return {
   -- ファイルツリー
   { "nvim-tree/nvim-tree.lua" },
   { "nvim-tree/nvim-web-devicons" },
+
+  -- キーバインドのヒント表示
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+  },
+
+  -- ステータスライン
+  {
+    "nvim-lualine/lualine.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+  },
+
+  -- バッファタブ
+  {
+    "romgrk/barbar.nvim",
+    dependencies = {
+      "lewis6991/gitsigns.nvim",
+      "nvim-tree/nvim-web-devicons",
+    },
+    init = function()
+      vim.g.barbar_auto_setup = false
+    end,
+  },
 }

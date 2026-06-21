@@ -16,3 +16,8 @@ require("lazy").setup("plugins")
 require("config.cmp")
 require("config.mason")
 require("config.nvim-tree")
+require("config.barbar")
+require("config.lualine")
+require("config.which-key")
+require("config.helpbar")
+
