@@ -94,6 +94,44 @@ end)
 
 local bash = "C:\\Program Files\\Git\\bin\\bash.exe"
 
+-- 通常時の背景（黒レイヤー + 画像レイヤー）
+local background_default = {
+  {
+    source = { Color = "#000000" },
+    width = "100%",
+    height = "100%",
+    opacity = 0.85,
+  },
+  {
+    source = { File = "C:\\Users\\Owner\\dotfiles\\wezterm\\backgrounds\\leorio.png" },
+    width = "30%",
+    height = "100%",
+    opacity = 0.85,
+    horizontal_align = "Right",
+  },
+}
+
+-- neovim使用時の背景（画像レイヤーを外し黒レイヤーのみ）
+local background_no_image = {
+  {
+    source = { Color = "#000000" },
+    width = "100%",
+    height = "100%",
+    opacity = 0.85,
+  },
+}
+
+-- アクティブペインのプロセス名を見て、neovim使用時は背景画像を非表示にする
+wezterm.on("update-status", function(window, pane)
+  local process = pane:get_foreground_process_name() or ""
+  local name = process:match("([^/\\]+)$") or process
+  name = name:gsub("%.exe$", ""):lower()
+
+  local overrides = window:get_config_overrides() or {}
+  overrides.background = (name == "nvim") and background_no_image or background_default
+  window:set_config_overrides(overrides)
+end)
+
 return {
   default_prog = { bash, "--login" },
   window_decorations = "RESIZE",
@@ -103,21 +141,7 @@ return {
     "JetBrains Mono",
   },
 
-  background = {
-    {
-      source = { Color = "#000000" },
-      width = "100%",
-      height = "100%",
-      opacity = 0.85,
-    },
-    {
-      source = { File = "C:\\Users\\Owner\\dotfiles\\wezterm\\backgrounds\\leorio.png" },
-      width = "30%",
-      height = "100%",
-      opacity = 0.85,
-      horizontal_align = "Right",
-    },
-  },
+  background = background_default,
 
   window_frame = {
     inactive_titlebar_bg = "none",
