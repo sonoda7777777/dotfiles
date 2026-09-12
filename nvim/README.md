@@ -50,7 +50,7 @@ nvim-cmp の補完設定。キーマップは以下の通り。
 | `<C-e>` | 補完を閉じる |
 
 ### `lua/config/mason.lua`
-Mason によるLSPサーバーの自動インストール設定。
+Mason で `:Mason` からインストールしたLSPサーバーを自動的に有効化（`vim.lsp.enable`）し、nvim-cmp 用の補完capabilitiesを付与する設定。特定言語をハードコードしていないため、Masonでインストールするだけで任意の言語のLSP補完が有効になる。
 
 ### `lua/config/nvim-tree.lua`
 nvim-tree の設定。キーマップは以下の通り。
