@@ -53,4 +53,14 @@ return {
       vim.g.barbar_auto_setup = false
     end,
   },
+
+  -- インデント色付け（レインボー）
+  {
+    "lukas-reineke/indent-blankline.nvim",
+    main = "ibl",
+    event = { "BufReadPost", "BufNewFile" },
+    config = function()
+      require("config.indent-blankline")
+    end,
+  },
 }
